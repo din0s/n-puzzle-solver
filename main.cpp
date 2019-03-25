@@ -4,7 +4,8 @@
 
 
 template<typename T>
-int search(State &solution, std::set<State> &closed, T &agenda, int iter) {
+int search(State &solution, std::set<State> &closed, T &agenda) {
+    int iter = 0;
     while (!agenda.empty()) {
         State next = agenda.top();
         agenda.pop();
@@ -30,15 +31,15 @@ int search(State &solution, std::set<State> &closed, T &agenda, int iter) {
 }
 
 int dfs(State &solution, std::set<State> &closed, std::stack<State> &agenda) {
-    return search(solution, closed, agenda, 0);
+    return search(solution, closed, agenda);
 }
 
 int bfs(State &solution, std::set<State> &closed, my_queue &agenda) {
-    return search(solution, closed, agenda, 0);
+    return search(solution, closed, agenda);
 }
 
 int bestfs(State &solution, std::set<State> &closed, my_priority_queue &agenda) {
-    return search(solution, closed, agenda, 0);
+    return search(solution, closed, agenda);
 }
 
 int main() {
