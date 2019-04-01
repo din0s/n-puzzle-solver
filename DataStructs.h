@@ -9,11 +9,7 @@
 
 struct compareStates {
     bool operator()(State &a, State &b) {
-        if (a.inPlace() == b.inPlace()) {
-            return a.getPath().size() + a.manhattan() > b.getPath().size() + b.manhattan();
-        } else {
-            return a.inPlace() < b.inPlace();
-        }
+        return a.inPlace() < b.inPlace();
     }
 };
 
