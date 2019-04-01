@@ -30,7 +30,7 @@ State::State(int w, int h) {
     long seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     std::shuffle(&numbers[0], &numbers[size], std::default_random_engine(seed));
 
-//    int numbers[] = {2, 7, 3, 8, 6, 0, 5, 1, 4};
+//    int numbers[] = {6, 7, 1, 0, 3, 2, 8, 5, 4};
 
     tiles = new int *[height];
     for (int i = 0; i < height; i++) {
