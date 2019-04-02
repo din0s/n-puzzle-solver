@@ -34,7 +34,7 @@ Here's the starting position for posterity:
 
 
 ## Breadth First Search
-This algorithm is similar to [DFS](#Depth First Search), but it uses a queue for the agenda.
+This algorithm is similar to [DFS](#depth-first-search), but it uses a queue for the agenda.
 
 Although this algorithm is memory-heavy, it's always going to give us the best solution possible.
 Beware that a complex staring layout may also cause the program to crash due to the aforementioned
@@ -127,5 +127,5 @@ Solution: (230 iterations / 108ms)
 - RIGHT
 ```
 
-The solution isn't as short as the one [BFS](#Best First Search) returned, but the computation
+The solution isn't as short as the one [BFS](#best-first-search) returned, but the computation
 time is orders of magnitude faster!
