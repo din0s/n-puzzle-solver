@@ -14,7 +14,7 @@ private:
     int **tiles;
     Coords blank;
     int width, height, size;
-    std::vector<std::string> path;
+    State* previous;
 
     void moveBlank(Coords c);
 
@@ -38,6 +38,8 @@ public:
     State();
 
     State(int, int);
+
+    State(int, int, int*);
 
     State(const State &);
 
@@ -69,7 +71,7 @@ public:
 
     std::vector<State> expand();
 
-    std::vector<std::string> getPath() { return path; }
+    std::vector<std::string> getPath();
 };
 
 

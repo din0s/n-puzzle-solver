@@ -43,37 +43,43 @@ int bestfs(State &solution, std::set<State> &closed, my_priority_queue &agenda) 
 }
 
 int main() {
-    int width, height, algo;
-    std::cout << "Insert width: ";
-    std::cin >> width;
-    std::cout << "Insert height: ";
-    std::cin >> height;
-    std::cout << std::endl;
-
+    std::string in;
     State start;
-    bool tryAgain;
 
-    do {
-        tryAgain = false;
+    std::cout << "Do you want to generate a random configuration? (Y/n)" << std::endl
+              << "If not, the project's default one will be used: ";
+    std::cin >> in;
 
-        start = State(width, height);
-        std::cout << "Start: " << std::endl
-                  << start.toString() << std::endl;
+    if (std::tolower(in[0]) == 'n') {
+        int numbers[] = {6, 7, 1, 0, 3, 2, 8, 5, 4};
+        start = State(3, 3, numbers);
+    } else {
+        int width, height;
+        std::cout << "Insert width: ";
+        std::cin >> width;
+        std::cout << "Insert height: ";
+        std::cin >> height;
 
-        if (!start.isSolvable()) {
-            std::cout << "Starting layout is not solvable! Try again? (y/N)" << std::endl;
+        bool ok = false;
+        while (!ok) {
+            start = State(width, height);
+            std::cout << std::endl
+                      << "Start: " << std::endl
+                      << start.toString() << std::endl;
 
-            std::string in;
-            std::cin >> in;
-            std::cout << std::endl;
+            ok = start.isSolvable();
 
-            tryAgain = std::tolower(in[0]) == 'y';
-            if (!tryAgain) {
-                return 0;
+            if (!ok) {
+                std::cout << "Starting layout is not solvable! Try again? (Y/n)" << std::endl;
+                std::cin >> in;
+
+                if (std::tolower(in[0]) == 'n')
+                    return 0;
             }
         }
-    } while (tryAgain);
+    }
 
+    int algo;
     std::cout << "Select algorithm (1/2/3): " << std::endl
               << "1) Depth First Search" << std::endl
               << "2) Breadth First Search" << std::endl
@@ -114,13 +120,14 @@ int main() {
         auto time1 = std::chrono::high_resolution_clock::now();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(time1 - time0).count();
 
-        std::cout << "Solution: (" << iterations << " iterations / " << ms << "ms)" << std::endl;
+        std::cout << "Solution:" << std::endl;
+        std::vector<std::string> path = end.getPath();
         for (std::string &s : end.getPath()) {
-            std::cout << "- " << s << std::endl;
+            std::cout << s << std::endl;
         }
 
-        std::cout << "Result: " << std::endl
-                  << end.toString();
+        std::cout << "Completed in " << path.size() - 1 << " steps." << std::endl
+                  << iterations << " iterations / " << ms << "ms" << std::endl;
     } else {
         std::cout << "No solution!" << std::endl;
     }

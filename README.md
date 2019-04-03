@@ -5,33 +5,36 @@ Project #1 for Artificial Intelligence, 4th semester at Computer Science | AUTh.
 In order to solve the n-puzzle problem, we need a State object
 that contains information such as the contents of each tile
 as well as the dimensions of the puzzle, the location of the blank tile
-and a vector that contains all steps taken from the starting layout.
+and the previous state of the problem that produced the current one.
 
 Within that class, I implemented a few methods that are responsible for moving
 the blank tile on all 4 directions, some operator overloads that are utilised by
 the data structs needed for the algorithms, a few other methods that evaluate the
 current state (useful for the heuristic function) and convenience methods that determine
-whether the puzzle is solved, how to print the state as well as the path of steps taken
-and how to expand the current state into all of its children.
+whether the puzzle is solved, how to print the state as well as the path of the states
+we followed and how to expand the current state into all of its children.
 
 ## Depth First Search
 This algorithm is implemented using a stack for the agenda.
 I opted for a non-recursive solution to decrease memory allocation on the stack,
 which might have caused overflows and unwanted program crashes.
 
-However, for the given starting state, this algorithm cannot finish execution before
-throwing a bad_alloc() exception, when the system runs out of memory.
-The explanation for this behavior is that the algorithm gets stuck exploring a path
-of steps that won't give us the solution and thus runs out of time.
+I originally had issues with the implementation since during runtime, the algorithm
+would explore long solution paths which had a huge memory footprint, and thus couldn't
+continue the execution after a number of iterations.
+This issue was solved with backtracking.
 
-Here's the starting position for posterity:
+Τhe algorithm returns the following solution:
 
-||||
-|---|---|---|
-| 6 | 7 | 1 |
-|   | 3 | 2 |
-| 8 | 5 | 4 |
+```
+Solution:
+[...]
+Completed in 58441 steps.
+95585 iterations / 15986ms
+```
 
+We can easily notice that the solution is far from optimal, since this blind algorithm might
+get stuck in long paths trying to solve the problem even if it's actually straying away from it.
 
 ## Breadth First Search
 This algorithm is similar to [DFS](#depth-first-search), but it uses a queue for the agenda.
@@ -42,32 +45,14 @@ intensiveness of this algorithm for the system's memory.
 
 For the given starting state, we get the following results:
 ```
-Solution: (126903 iterations / 109194ms)
-- UP
-- RIGHT
-- RIGHT
-- DOWN
-- LEFT
-- LEFT
-- UP
-- RIGHT
-- RIGHT
-- DOWN
-- DOWN
-- LEFT
-- UP
-- RIGHT
-- DOWN
-- LEFT
-- LEFT
-- UP
-- RIGHT
-- RIGHT
-- DOWN
+Solution:
+[...]
+Completed in 21 steps.
+126903 iterations / 20713ms
 ```
 
-We can see that the algorithm lasted a little under 2 minutes and gave us a solution that is
-only 20 steps long.
+We can see that the algorithm lasted a little over 20 seconds and gave us a solution that is
+only 21 steps long.
 
 ## Best First Search
 This algorithm is non-recursive as well and uses a priority queue for the agenda.
@@ -83,49 +68,22 @@ each tile from its destination position, as well as counting the length of the s
 
 Its execution bears the following results:
 ```
-Solution: (230 iterations / 108ms)
-- UP
-- RIGHT
-- RIGHT
-- DOWN
-- LEFT
-- DOWN
-- LEFT
-- UP
-- UP
-- RIGHT
-- RIGHT
-- DOWN
-- LEFT
-- DOWN
-- LEFT
-- UP
-- RIGHT
-- DOWN
-- RIGHT
-- UP
-- LEFT
-- DOWN
-- LEFT
-- UP
-- RIGHT
-- DOWN
-- RIGHT
-- UP
-- LEFT
-- DOWN
-- LEFT
-- UP
-- RIGHT
-- RIGHT
-- DOWN
-- LEFT
-- UP
-- LEFT
-- DOWN
-- RIGHT
-- RIGHT
+Solution:
+[...]
+Completed in 41 steps.
+230 iterations / 75ms
 ```
 
 The solution isn't as short as the one [BFS](#best-first-search) returned, but the computation
 time is orders of magnitude faster!
+
+## Implementation Comments
+A few of the things I noticed while working on this project were:
+- Saving the steps we followed for each state we visit created memory issues
+and had to be replaced with backtracking.
+- The heuristic function "Manhattan Distance" had a slower runtime and
+was replaced with "Tiles In Place".
+- I used templates for the implementation of the algorithms since their
+only difference is in the data structure their agenda uses.
+- The check for whether the problem is solvable is based on
+[this article](http://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html).

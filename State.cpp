@@ -11,6 +11,7 @@
 
 State::State() {
     tiles = nullptr;
+    previous = nullptr;
     width = 0;
     height = 0;
     size = 0;
@@ -18,19 +19,23 @@ State::State() {
 }
 
 State::State(int w, int h) {
-    width = w;
-    height = h;
-    size = w * h;
-
-    int *numbers = new int[size];
-    for (int i = 0; i < size; i++) {
+    auto numbers = new int[w * h];
+    for (int i = 0; i < w * h; i++) {
         numbers[i] = i;
     }
 
     long seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    std::shuffle(&numbers[0], &numbers[size], std::default_random_engine(seed));
+    std::shuffle(&numbers[0], &numbers[w * h], std::default_random_engine(seed));
 
-//    int numbers[] = {6, 7, 1, 0, 3, 2, 8, 5, 4};
+    *this = State(w, h, numbers);
+    delete[] numbers;
+}
+
+State::State(int w, int h, int* numbers) {
+    width = w;
+    height = h;
+    size = w * h;
+    previous = nullptr;
 
     tiles = new int *[height];
     for (int i = 0; i < height; i++) {
@@ -45,15 +50,13 @@ State::State(int w, int h) {
             }
         }
     }
-
-    delete[] numbers;
 }
 
 State::State(const State &s) {
     width = s.width;
     height = s.height;
     size = s.size;
-    path = s.path;
+    previous = s.previous;
 
     blank = s.blank;
     tiles = new int *[height];
@@ -68,7 +71,6 @@ State::State(const State &s) {
 
 State::~State() {
     delete[] tiles;
-    path.clear();
 }
 
 std::string State::toString() const {
@@ -100,7 +102,7 @@ State &State::operator=(const State &o) {
     width = o.width;
     height = o.height;
     size = o.size;
-    path = o.path;
+    previous = o.previous;
 
     blank = o.blank;
     tiles = new int *[height];
@@ -241,7 +243,7 @@ bool State::moveUp(State &s) {
 
     s = *this;
     s.moveX(-1);
-    s.path.emplace_back("UP");
+    s.previous = new State(*this);
     return true;
 }
 
@@ -252,7 +254,7 @@ bool State::moveDown(State &s) {
 
     s = *this;
     s.moveX(+1);
-    s.path.emplace_back("DOWN");
+    s.previous = new State(*this);
     return true;
 }
 
@@ -263,7 +265,7 @@ bool State::moveLeft(State &s) {
 
     s = *this;
     s.moveY(-1);
-    s.path.emplace_back("LEFT");
+    s.previous = new State(*this);
     return true;
 }
 
@@ -274,6 +276,24 @@ bool State::moveRight(State &s) {
 
     s = *this;
     s.moveY(+1);
-    s.path.emplace_back("RIGHT");
+    s.previous = new State(*this);
     return true;
+}
+
+std::vector<std::string> State::getPath() {
+    if (previous == nullptr) {
+        return std::vector<std::string>();
+    }
+
+    std::vector<std::string> path;
+    path.emplace_back(toString());
+
+    State* ptr = previous;
+    do {
+        path.emplace_back(ptr->toString());
+        ptr = ptr->previous;
+    } while (ptr != nullptr);
+
+    std::reverse(path.begin(), path.end());
+    return path;
 }
